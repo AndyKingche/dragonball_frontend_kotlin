@@ -27,5 +27,14 @@ object CharacterService {
          return characterPost
     }
 
+    suspend fun putCharacter(character: CharacterModel, id:Int): RestResponse<MessageResult>{
+
+        val characterPut: RestResponse<MessageResult> = restClient.request<MessageResult,CharacterModel>("http://localhost:8084/api/character/update-character/${id}", data = character ){
+            method = HttpMethod.PUT
+        }.asDeferred().await()
+
+        return characterPut
+    }
+
 
 }

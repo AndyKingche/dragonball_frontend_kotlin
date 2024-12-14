@@ -3,6 +3,7 @@ package com.example.project.components.CharacterForm
 import com.example.project.model.CharacterModel
 import com.example.project.model.MessageResult
 import com.example.project.services.CharacterService.postCharacter
+import com.example.project.services.CharacterService.putCharacter
 import io.kvision.form.form
 import io.kvision.form.text.text
 import io.kvision.form.text.textArea
@@ -34,6 +35,7 @@ fun CharacterFormUpdate(root: Button, character: CharacterModel,id: Int) {
 
                 div(className = "mb-3") {
                     ageInput = text( InputType.NUMBER, label = "Edad") {
+                        value = character.age.toString()
                         width = 100.px
                         placeholder = "Edad"
                     }
@@ -42,12 +44,14 @@ fun CharacterFormUpdate(root: Button, character: CharacterModel,id: Int) {
                 div(className = "mb-3") {
 
                     descInput = textArea(rows = 3, label = "Descripcion") {
+                        value = character.desc
                         placeholder = "Descripcion"
                     }
                 }
 
                 div(className = "mb-3") {
                     powerLevelInput = text(InputType.NUMBER, label = "Power Level") {
+                        value = character.powerLevel.toString()
                         width = 100.px
                         placeholder = "Power Level"
                     }
@@ -56,7 +60,7 @@ fun CharacterFormUpdate(root: Button, character: CharacterModel,id: Int) {
             }
         }
 
-        modal.addButton(button = Button("Guardar", type = ButtonType.SUBMIT, className = "btn btn-warning").apply {
+        modal.addButton(button = Button("Actualizar", type = ButtonType.SUBMIT, className = "btn btn-warning").apply {
             onClick {
                 it.preventDefault()
                 println(nameInput?.value.orEmpty())
@@ -73,14 +77,14 @@ fun CharacterFormUpdate(root: Button, character: CharacterModel,id: Int) {
 
                 GlobalScope.launch {
                     try {
-                        val status : RestResponse<MessageResult> =  postCharacter(newCharacterModel)
+                        val status : RestResponse<MessageResult> =  putCharacter(newCharacterModel, id)
                         println(status)
 
                         if(status.data.status){
                             window.location.reload()
                         }
                     }catch (e: Exception){
-                        println("El error al crear el personaje : ${e.message}")
+                        println("El error al actualizar el personaje : ${e.message}")
                     }
                 }
 
