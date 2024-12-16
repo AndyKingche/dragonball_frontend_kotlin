@@ -35,6 +35,14 @@ object CharacterService {
 
         return characterPut
     }
+    suspend fun deleteCharacter(id:Int): RestResponse<MessageResult>{
+
+        val characterDelete: RestResponse<MessageResult> = restClient.request<MessageResult>("http://localhost:8084/api/character/delete-character/${id}"){
+            method = HttpMethod.DELETE
+        }.asDeferred().await()
+
+        return characterDelete
+    }
 
 
 }
