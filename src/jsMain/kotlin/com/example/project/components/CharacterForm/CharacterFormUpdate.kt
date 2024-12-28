@@ -1,24 +1,30 @@
 package com.example.project.components.CharacterForm
 
 import com.example.project.model.CharacterModel
-import com.example.project.model.MessageResult
+import com.example.project.results.FireMessageResult
+import com.example.project.results.MessageResult
 import com.example.project.services.CharacterService.postCharacter
 import com.example.project.services.CharacterService.putCharacter
+import com.example.project.services.CharacterService.uploadImageCharacter
 import io.kvision.form.form
 import io.kvision.form.text.text
 import io.kvision.form.text.textArea
-import io.kvision.html.Button
-import io.kvision.html.ButtonType
-import io.kvision.html.InputType
-import io.kvision.html.div
+import io.kvision.html.*
 import io.kvision.modal.Modal
 import io.kvision.rest.RestResponse
 import io.kvision.utils.px
+import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.w3c.dom.HTMLInputElement
+import org.w3c.files.get
+
 
 fun CharacterFormUpdate(root: Button, character: CharacterModel,id: Int) {
+
+    var imgCambio : Boolean = false
+
 
     root.apply {
 
@@ -57,6 +63,35 @@ fun CharacterFormUpdate(root: Button, character: CharacterModel,id: Int) {
                     }
 
                 }
+                div(className = "mb-3") {
+                    //imageUpload = uploadInput(accept = listOf("image/png","image/jpg"))
+                    val uploadFileContainer = div(className = "col-12") {
+                        CharacterFormUploadFile(this)
+                    }
+                    uploadFileContainer.visible = false
+                    if (character.image != null){
+                        p(className = "text-muted") {
+                            content = "Ten en cuenta que el Personaje ya tiene una imagen guardada en la Base de Datos"
+                            link("Cambiar Imagen: ", "#", "fas fa-trash", labelFirst = false){
+                                onClick {
+                                    if (label == "Cambiar Imagen: ") {
+                                        label = "No Cambiar Imagen: "
+                                            uploadFileContainer.show()
+                                        imgCambio = true
+                                    }else if (label == "No Cambiar Imagen: "){
+                                        label = "Cambiar Imagen: "
+                                        uploadFileContainer.hide()
+                                        imgCambio = false
+                                    }
+
+                                }
+                            }
+                        }
+                    }else{
+                        CharacterFormUploadFile(this)
+
+                    }
+                }
             }
         }
 
@@ -75,20 +110,45 @@ fun CharacterFormUpdate(root: Button, character: CharacterModel,id: Int) {
                     powerLevel = powerLevelInput?.value.orEmpty().toInt(),
                 )
 
+                if (character.image == null || imgCambio) {
+                    val inputImage = document.getElementById("upload-file") as HTMLInputElement
+                    val file = inputImage.files?.get(0)
+
                 GlobalScope.launch {
                     try {
-                        val status : RestResponse<MessageResult> =  putCharacter(newCharacterModel, id)
-                        println(status)
+                        if (file != null) {
+                            var imageUpload: FireMessageResult = uploadImageCharacter(file)
+                            if (imageUpload.status) {
+                                newCharacterModel.image = imageUpload.link
+                                val status: RestResponse<MessageResult> = putCharacter(newCharacterModel, id)
+                                if (status.data.status) {
+                                    window.location.reload()
+                                }
 
-                        if(status.data.status){
-                            window.location.reload()
+                            }
+                        }else{
+
+                            newCharacterModel.image = character.image
+                            val status: RestResponse<MessageResult> = putCharacter(newCharacterModel, id)
+                            if (status.data.status) {
+                                window.location.reload()
+                            }
                         }
-                    }catch (e: Exception){
+                    } catch (e: Exception) {
                         println("El error al actualizar el personaje : ${e.message}")
                     }
                 }
+            }else{
 
+                GlobalScope.launch {
 
+                    newCharacterModel.image = character.image
+                    val status: RestResponse<MessageResult> = putCharacter(newCharacterModel, id)
+                    if (status.data.status) {
+                        window.location.reload()
+                    }
+                }
+                }
                 modal.hide()
 
             }

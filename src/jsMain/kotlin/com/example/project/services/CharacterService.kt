@@ -1,20 +1,26 @@
 package com.example.project.services
 
 import com.example.project.model.CharacterModel
-import com.example.project.model.MessageResult
+import com.example.project.results.FireMessageResult
+import com.example.project.results.MessageResult
+import io.kvision.chart.toJs
 import io.kvision.rest.*
-import io.kvision.state.ObservableValue
 import io.kvision.utils.obj
+import kotlinx.browser.window
 import kotlinx.coroutines.asDeferred
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.*
+import kotlinx.coroutines.await
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromDynamic
+import org.w3c.dom.Text
+import org.w3c.fetch.*
+import org.w3c.files.File
+import org.w3c.xhr.FormData
 import kotlin.js.Promise
 
 object CharacterService {
     private val restClient = RestClient()
 
-
-    val characters: Promise<List<CharacterModel>> = restClient.call("http://localhost:8084/api/character/list"){
+    val characters: Promise<List<CharacterModel>> = restClient.call("http://192.168.1.8:8084/api/character/list"){
         method = HttpMethod.GET
     }
 
@@ -42,6 +48,21 @@ object CharacterService {
         }.asDeferred().await()
 
         return characterDelete
+    }
+
+
+    suspend fun uploadImageCharacter(file: File): FireMessageResult {
+        val formdata = FormData()
+        formdata.append("file",file)
+
+        val promise = window.fetch("http://localhost:8084/api/character/image", RequestInit(method = "POST", body = formdata, mode = RequestMode.CORS, headers = js("{}"))).await()
+            if(promise.ok){
+                val jsonrespuest = promise.text().await()
+                return Json.decodeFromString<FireMessageResult>(jsonrespuest)
+            }else{
+                throw Exception("Error al subir el archivo: ${promise.statusText}")
+            }
+
     }
 
 

@@ -1,22 +1,34 @@
 package com.example.project.components.CharacterForm
 
 import com.example.project.model.CharacterModel
-import com.example.project.model.MessageResult
+import com.example.project.results.FireMessageResult
+import com.example.project.results.MessageResult
 import com.example.project.services.CharacterService.postCharacter
+import com.example.project.services.CharacterService.uploadImageCharacter
 import io.kvision.form.form
 import io.kvision.form.text.*
+import io.kvision.form.upload.UploadInput
 import io.kvision.html.*
 import io.kvision.modal.Modal
 import io.kvision.rest.RestResponse
 import io.kvision.utils.px
+import kotlinx.browser.document
 import kotlinx.browser.window
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromDynamic
+import kotlinx.serialization.json.decodeFromJsonElement
+import org.w3c.dom.HTMLInputElement
+import org.w3c.fetch.Response
+import org.w3c.files.get
+import kotlin.js.Promise
+
 
 var nameInput: Text? = null
 var ageInput: Text? = null
 var descInput: TextArea? = null
 var powerLevelInput: Text? = null
+var imageInput: String? = null
 
 fun CharacterFormCreate(root: Button){
 
@@ -53,6 +65,12 @@ fun CharacterFormCreate(root: Button){
                         }
 
                     }
+
+                    div(className = "mb-3") {
+                        //imageUpload = uploadInput(accept = listOf("image/png","image/jpg"))
+                        CharacterFormUploadFile(this)
+
+                    }
                 }
             }
 
@@ -64,25 +82,42 @@ fun CharacterFormCreate(root: Button){
                     println(descInput?.value.orEmpty())
                     println(powerLevelInput?.value.orEmpty())
 
+
                     val newCharacterModel = CharacterModel(
                         name = nameInput?.value.orEmpty(),
                         age = ageInput?.value.orEmpty().toInt(),
                         desc = descInput?.value.orEmpty(),
                         powerLevel = powerLevelInput?.value.orEmpty().toInt(),
                     )
+                    val inputImage = document.getElementById("upload-file") as HTMLInputElement
+                    val file = inputImage.files?.get(0)
+
+
 
                     GlobalScope.launch {
                         try {
-                            val status : RestResponse<MessageResult> =  postCharacter(newCharacterModel)
-                            println(status)
+                            if(file != null) {
+                                var imageUpload: FireMessageResult = uploadImageCharacter(file)
 
-                            if(status.data.status){
-                                window.location.reload()
+                                if (imageUpload.status) {
+                                    newCharacterModel.image = imageUpload.link
+                                    val status : RestResponse<MessageResult> =  postCharacter(newCharacterModel)
+                                    if(status.data.status){
+                                        window.location.reload()
+                                    }
+
+                                }
+                            }else{
+                                val status : RestResponse<MessageResult> =  postCharacter(newCharacterModel)
+                                if(status.data.status){
+                                    window.location.reload()
+                                }
                             }
                         }catch (e: Exception){
                             println("El error al crear el personaje : ${e.message}")
                         }
                     }
+
 
 
                    modal.hide()

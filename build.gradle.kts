@@ -4,6 +4,7 @@ plugins {
     kotlin("multiplatform") version kotlinVersion
     val kvisionVersion: String by System.getProperties()
     id("io.kvision") version kvisionVersion
+
 }
 
 version = "1.0.0-SNAPSHOT"
@@ -12,6 +13,7 @@ group = "com.example"
 repositories {
     mavenCentral()
     mavenLocal()
+    google()
 }
 
 // Versions
@@ -61,11 +63,12 @@ kotlin {
         implementation("io.kvision:kvision-tabulator-remote:$kvisionVersion")
         implementation("io.kvision:kvision-material:$kvisionVersion")
         implementation("io.kvision:kvision-bootstrap:$kvisionVersion")
-
-
+        implementation("com.google.firebase:firebase-crashlytics-buildtools:3.0.2")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     }
     sourceSets["jsTest"].dependencies {
         implementation(kotlin("test-js"))
         implementation("io.kvision:kvision-testutils:$kvisionVersion")
+        implementation("com.google.firebase:firebase-crashlytics-buildtools:3.0.2")
     }
 }

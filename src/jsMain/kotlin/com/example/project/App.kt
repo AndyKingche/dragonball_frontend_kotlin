@@ -1,6 +1,7 @@
 package com.example.project
 
 import com.example.project.components.CharacterList.showCharacterTable
+import com.example.project.components.Footer.showFooter
 import com.example.project.components.Navbar.showNavBar
 import io.kvision.*
 import io.kvision.html.div
@@ -18,7 +19,7 @@ class App : Application() {
     init {
         ThemeManager.init(initialTheme = Theme.DARK, remember = false)
         require("css/bootstrap.min.css")
-
+        require("css/dragonimg.css")
     }
 
     override fun start() {
@@ -32,9 +33,11 @@ class App : Application() {
 
         root("kvapp") {
             showNavBar(this)
-            //div(tr("Vane Te amo "))
             showCharacterTable(this)
 
+        }
+        root("footer") {
+            showFooter(this)
         }
 
     }
@@ -58,8 +61,7 @@ fun main() {
         TabulatorCssBootstrapModule,
         MapsModule,
         MaterialModule,
-        CoreModule,
-
+        CoreModule
     )
 
 }

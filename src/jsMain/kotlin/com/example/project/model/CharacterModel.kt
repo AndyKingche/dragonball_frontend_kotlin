@@ -8,6 +8,6 @@ data class CharacterModel(
     val name: String,
     val desc: String,
     val age: Int,
-    val image: String?=null,
+    var image: String?=null,
     val powerLevel: Int
 )
