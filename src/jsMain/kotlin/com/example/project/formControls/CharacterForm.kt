@@ -4,7 +4,7 @@ import io.kvision.types.KFile
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class characterForm(
+data class CharacterForm(
     val name: String? = null,
     val desc: String? = null,
     val age: Int? = null,
