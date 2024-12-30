@@ -6,7 +6,22 @@ import io.kvision.html.*
 import io.kvision.panel.Root
 import io.kvision.utils.px
 
-
+/**
+ * Muestra el pie de página (footer) en la interfaz de usuario, con información de copyright, enlaces y logotipos.
+ * El pie de página incluye una breve descripción sobre la aplicación, información de derechos de autor,
+ * y enlaces a los proyectos utilizados en la construcción del sitio.
+ *
+ * @param root El componente raíz [Root] donde se agregará el pie de página.
+ *
+ * El pie de página contiene las siguientes secciones:
+ * - **Logo**: Un logotipo de la aplicación con un breve texto descriptivo.
+ * - **Derechos de autor**: Información sobre los derechos de autor, incluyendo el año actual y el propietario.
+ * - **Enlaces a tecnologías**: Enlaces que muestran los logotipos de las tecnologías utilizadas para construir la aplicación (Kotlin, Kvision, Spring Boot).
+ * - **Enlace a GitHub**: Un enlace al perfil de GitHub del desarrollador, representado con un icono de GitHub.
+ *
+ * Esta función organiza estos elementos en un diseño responsivo utilizando clases de Bootstrap para la alineación
+ * y el estilo visual.
+ */
 fun showFooter(root: Root) {
     root.apply {
         footer(className = "pt-5 pb-3") {

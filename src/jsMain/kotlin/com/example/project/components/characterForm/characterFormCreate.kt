@@ -20,7 +20,27 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.files.get
 
 
-
+/**
+ * Se crea un formulario modal para ingresar un nuevo personaje, con campos para el nombre, edad, descripción y nivel de poder.
+ * Además, permite cargar una imagen del personaje y guarda los datos en el servidor.
+ *
+ * @param root El botón [Button] que al ser presionado desencadenará la apertura del modal y la creación del personaje.
+ *
+ * El formulario incluye los siguientes campos:
+ * - **Nuevo Personaje**: Campo de texto para el nombre del personaje.
+ * - **Edad**: Campo numérico para la edad del personaje.
+ * - **Descripción**: Campo de texto para proporcionar una breve descripción del personaje.
+ * - **Power Level**: Campo numérico para el nivel de poder del personaje.
+ * - **Imagen**: Opción para subir una imagen del personaje.
+ *
+ * Una vez que el formulario es enviado:
+ * 1. Se crea un objeto [CharacterModel] con los valores ingresados en el formulario.
+ * 2. Si se ha seleccionado una imagen, esta es subida usando [uploadImageCharacter].
+ * 3. Los datos del personaje (incluyendo la imagen si es subida) son enviados al servidor utilizando [postCharacter].
+ * 4. Si la creación del personaje es exitosa, la página se recarga.
+ *
+ * @throws Exception Sí ocurre un error durante la subida de la imagen o al enviar los datos al servidor.
+ */
 var nameInput: Text? = null
 var ageInput: Text? = null
 var descInput: TextArea? = null

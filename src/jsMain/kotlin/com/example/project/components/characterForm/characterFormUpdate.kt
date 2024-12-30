@@ -5,6 +5,7 @@ package com.example.project.components.characterForm
 import com.example.project.model.CharacterModel
 import com.example.project.results.FireMessageResult
 import com.example.project.results.MessageResult
+import com.example.project.services.CharacterService.postCharacter
 import com.example.project.services.CharacterService.putCharacter
 import com.example.project.services.CharacterService.uploadImageCharacter
 import io.kvision.form.form
@@ -22,6 +23,31 @@ import kotlinx.coroutines.launch
 import org.w3c.dom.HTMLInputElement
 import org.w3c.files.get
 
+/**
+ * Se crea un formulario modal para actualizar un nuevo personaje, con campos para el nombre, edad, descripción y nivel de poder.
+ * Además, permite actualizar y cargar una imagen del personaje y guarda los datos en el servidor.
+ *
+ * @param root El botón [Button] que al ser presionado desencadenará la apertura del modal y la creación del personaje.
+ * @param character El objeto [CharacterModel] que contiene los datos del personaje a crear
+ * @param id El identificador único del personaje que se desea actualizar.
+ *
+ * El formulario incluye los siguientes campos:
+ * - **Nuevo Personaje**: Campo de texto para el nombre del personaje.
+ * - **Edad**: Campo numérico para la edad del personaje.
+ * - **Descripción**: Campo de texto para proporcionar una breve descripción del personaje.
+ * - **Power Level**: Campo numérico para el nivel de poder del personaje.
+ * - **Imagen**: Opción para subir una imagen del personaje.
+ * Nota: Hay una validación de la subida de imágenes en el caso de que un personaje ya tenga una imagen se le preguntará si desea
+ * actualizarlo o no.
+ *
+ * Una vez que el formulario es enviado:
+ * 1. Se crea un objeto [CharacterModel] con los valores ingresados en el formulario.
+ * 2. Si se ha seleccionado una imagen, esta es subida usando [uploadImageCharacter].
+ * 3. Los datos del personaje (incluyendo la imagen si es subida) son enviados al servidor utilizando [postCharacter].
+ * 4. Si la creación del personaje es exitosa, la página se recarga.
+ *
+ * @throws Exception Sí ocurre un error durante la subida de la imagen o al enviar los datos al servidor.
+ */
 
 @OptIn(DelicateCoroutinesApi::class)
 fun characterFormUpdate(
